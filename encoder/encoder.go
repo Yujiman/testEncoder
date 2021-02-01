@@ -16,43 +16,77 @@ func NewEncoder(lowList, capList []rune) *Encoder {
 	}
 }
 
-func (cl *Encoder) Encrypt(text string, key int) (string, error) {
+func (e *Encoder) Encrypt(text string, key int) (string, error) {
 	result := ""
 	for _, char := range text {
-		result += string(cl.getEncryptChar(char, key))
+		result += string(e.getEncryptChar(char, key))
 	}
 	return result, nil
 }
-
-func (cl *Encoder) getEncryptChar(char rune, key int) rune {
+func (e *Encoder) getEncryptChar(char rune, key int) rune {
 
 	if unicode.IsLower(char) {
-		idx, err := cl.getIdxLowerList(char)
+		idx, err := e.getIdxLowerList(char)
 		if err != nil {
 			return char
 		}
-		shift := key % len(cl.lowerList)
+		shift := key % len(e.lowerList)
 
-		char := cl.lowerList[(idx+shift)%len(cl.lowerList)]
+		char := e.lowerList[(idx+shift)%len(e.lowerList)]
 		return char
 	}
 
 	if unicode.IsUpper(char) {
-		idx, err := cl.getIdxCapitalList(char)
+		idx, err := e.getIdxCapitalList(char)
 		if err != nil {
 			return char
 		}
 
-		shift := key % len(cl.capitalList)
+		shift := key % len(e.capitalList)
 
-		char = cl.capitalList[(idx+shift)%len(cl.capitalList)]
+		char = e.capitalList[(idx+shift)%len(e.capitalList)]
 
 		return char
 	}
 	return char
 }
-func (cl *Encoder) getIdxLowerList(char rune) (int, error) {
-	for index, c := range cl.lowerList {
+
+func (e *Encoder) Decrypt(text string, key int) (string, error) {
+	result := ""
+	for _, char := range text {
+		result += string(e.getDecryptChar(char, key))
+	}
+	return result, nil
+}
+func (e *Encoder) getDecryptChar(char rune, key int) rune {
+	if unicode.IsLower(char) {
+		idx, err := e.getIdxLowerList(char)
+		if err != nil {
+			return char
+		}
+		shift := key % len(e.lowerList)
+
+		char := e.lowerList[(idx-shift)%len(e.lowerList)]
+		return char
+	}
+
+	if unicode.IsUpper(char) {
+		idx, err := e.getIdxCapitalList(char)
+		if err != nil {
+			return char
+		}
+
+		shift := key % len(e.capitalList)
+
+		char = e.capitalList[(idx-shift)%len(e.capitalList)]
+
+		return char
+	}
+	return char
+}
+
+func (e *Encoder) getIdxLowerList(char rune) (int, error) {
+	for index, c := range e.lowerList {
 		if char == c {
 			return index, nil
 		}
@@ -60,8 +94,8 @@ func (cl *Encoder) getIdxLowerList(char rune) (int, error) {
 	return 0, errors.New("character won't find in")
 }
 
-func (cl *Encoder) getIdxCapitalList(char rune) (int, error) {
-	for index, c := range cl.capitalList {
+func (e *Encoder) getIdxCapitalList(char rune) (int, error) {
+	for index, c := range e.capitalList {
 		if char == c {
 			return index, nil
 		}
