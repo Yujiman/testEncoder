@@ -19,12 +19,12 @@ func NewEncoder(lowList, capList []rune) *Encoder {
 func (cl *Encoder) Encrypt(text string, key int) (string, error) {
 	result := ""
 	for _, char := range text {
-		result += string(cl.getNewChar(char, key))
+		result += string(cl.getEncryptChar(char, key))
 	}
 	return result, nil
 }
 
-func (cl *Encoder) getNewChar(char rune, key int) rune {
+func (cl *Encoder) getEncryptChar(char rune, key int) rune {
 
 	if unicode.IsLower(char) {
 		idx, err := cl.getIdxLowerList(char)
