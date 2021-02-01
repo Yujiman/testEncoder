@@ -17,7 +17,11 @@ func NewEncoder(lowList, capList []rune) *Encoder {
 }
 
 func (cl *Encoder) Encrypt(text string, key int) (string, error) {
-	return "", nil
+	result := ""
+	for _, char := range text {
+		result += string(cl.getNewChar(char, key))
+	}
+	return result, nil
 }
 
 func (cl *Encoder) getNewChar(char rune, key int) rune {
@@ -41,7 +45,7 @@ func (cl *Encoder) getNewChar(char rune, key int) rune {
 
 		shift := key % len(cl.capitalList)
 
-		char = cl.lowerList[(idx+shift)%len(cl.capitalList)]
+		char = cl.capitalList[(idx+shift)%len(cl.capitalList)]
 
 		return char
 	}
