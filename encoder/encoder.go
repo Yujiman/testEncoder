@@ -20,12 +20,29 @@ func (cl *Encoder) Encrypt(text string, key int) (string, error) {
 	return "", nil
 }
 
-func (cl *Encoder) getNewChar(char rune, shift int) rune {
+func (cl *Encoder) getNewChar(char rune, key int) rune {
+
 	if unicode.IsLower(char) {
+		idx, err := cl.getIdxLowerList(char)
+		if err != nil {
+			return char
+		}
+		shift := key % len(cl.lowerList)
+
+		char := cl.lowerList[(idx+shift)%len(cl.lowerList)]
 		return char
 	}
 
 	if unicode.IsUpper(char) {
+		idx, err := cl.getIdxCapitalList(char)
+		if err != nil {
+			return char
+		}
+
+		shift := key % len(cl.capitalList)
+
+		char = cl.lowerList[(idx+shift)%len(cl.capitalList)]
+
 		return char
 	}
 	return char
